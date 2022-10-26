@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "argparser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rwtodd/ArgParser.git",
+      "state" : {
+        "revision" : "22656329d75653e0cbe42f3e5a6449403b16d5c7",
+        "version" : "1.0.1"
+      }
+    }
+  ],
+  "version" : 2
+}
