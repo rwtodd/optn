@@ -26,8 +26,9 @@ application {
     mainClass = 'optn.App'
 }
 
-task ss {
-   doLast {
-    println(sourceSets.main.groovy.srcDirs)
-   }
+// print out the runtime classpath to help run manually...
+task rcp {
+    doLast {
+        println(sourceSets.main.runtimeClasspath.asPath)
+    }
 }
