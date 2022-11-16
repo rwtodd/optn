@@ -18,7 +18,7 @@ repositories {
 dependencies {
     // Use the latest Groovy version for building this library
     implementation 'org.apache.groovy:groovy:4.0.6'
-    implementation 'org.rwtodd:org.rwtodd.args:1.0.0'
+    implementation 'org.rwtodd:org.rwtodd.args:1.0.1'
 }
 
 application {

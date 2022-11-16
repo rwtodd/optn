@@ -1,6 +1,7 @@
 package optn
 
 import groovy.transform.PackageScope
+import groovy.transform.CompileStatic as CS
 
 import java.text.NumberFormat
 import java.time.LocalDate;
@@ -8,26 +9,28 @@ import java.time.temporal.ChronoUnit;
 import org.rwtodd.args.*
 
 /* define a date argument that's easy to use from the command-line */
+@CS
 @PackageScope final class DateParam extends BasicOneArgParam<LocalDate> {
   private LocalDate today = LocalDate.now()
 
-  DateParam(names, dflt, help) { super(names, dflt, help); }
-  protected LocalDate convertArg(String param, String arg) {
+  DateParam(Collection<String> names, LocalDate dflt, String help) { super(names, dflt, help); }
+
+  @Override protected LocalDate convertArg(String param, String arg) {
     final var parts = arg.split('-').collect { Integer.valueOf(it) }
     return switch(parts.size()) {
-    case 3 -> LocalDate.of(*parts)
-    case 2 -> LocalDate.of(today.year, *parts)
-    case 1 -> LocalDate.of(today.year, today.monthValue, parts[0])
-    default -> throw new IllegalArgumentException("not a yyyy-mm-dd date!") 
+      case 3 -> LocalDate.of(parts[0],parts[1],parts[2])
+      case 2 -> LocalDate.of(today.year, parts[0],parts[1])
+      case 1 -> LocalDate.of(today.year, today.monthValue, parts[0])
+      default -> throw new IllegalArgumentException("not a yyyy-mm-dd date!")
     }
   }
 }
 
-
+@CS
 @PackageScope final class Utils {
-  static int WDAYS_PER_YEAR = 260
+  static double WDAYS_PER_YEAR = 260.0d
 
-  static def nextFriday(LocalDate today) {
+  static LocalDate nextFriday(LocalDate today) {
     today.plusDays(5 - today.dayOfWeek.value)
   }
 
@@ -43,14 +46,15 @@ import org.rwtodd.args.*
 
 import static optn.Utils.*; // just use the util funcs freely
 
+@CS
 @PackageScope class ShortPut {
   def run(String[] args) {
     // process args...
     def today = LocalDate.now()
-    def openDate = new DateParam(['open','o'],today,'The Date the position was opened (defaults to today)')
-    def expiryDate = new DateParam(['expiry','e'], nextFriday(today), 'The date the position expires (defaults to Friday)')
-    def strikePrice = new DoubleParam(['strike','s'],'the strike price of the option')
-    def salePrice = new DoubleParam(['premium','p'],'the premium from the sale')
+    def openDate = new DateParam(['open','o'],today,'<Date> The Date the position was opened (defaults to today)')
+    def expiryDate = new DateParam(['expiry','e'], nextFriday(today), '<Date> The date the position expires (defaults to Friday)')
+    def strikePrice = new DoubleParam(['strike','s'],'<Price> The strike price of the option')
+    def salePrice = new DoubleParam(['premium','p'],'<Price> The premium from the sale')
     def help = new FlagParam(['help'],'Displays this help text.')
     Parser p = [openDate,expiryDate, strikePrice, salePrice, help]
     try {
@@ -72,7 +76,7 @@ Days in Market:  ${weekdays}
 Capital:        \$${dblFmt.format(strikePrice.value * 100d)}
 Max Value:      \$${dblFmt.format(salePrice.value * 100d - 0.5d)}
 Pct Gain:        ${pctFmt.format(multiplier - 1)}
-Pct Annualized:  ${pctFmt.format(multiplier ** ((double)WDAYS_PER_YEAR / (double)weekdays) - 1)}
+Pct Annualized:  ${pctFmt.format(multiplier ** (WDAYS_PER_YEAR / weekdays) - 1.0d)}
 Break Even:     \$${dblFmt.format(strikePrice.value - salePrice.value)}
 """)
     } catch(Exception e) {
@@ -84,15 +88,16 @@ Break Even:     \$${dblFmt.format(strikePrice.value - salePrice.value)}
   }
 }
 
+@CS
 @PackageScope class CoveredCall {
   def run(String [] args) {
     // process args...
     def today = LocalDate.now()
-    def openDate = new DateParam(['open','o'],today,'The Date the position was opened (defaults to today)')
-    def expiryDate = new DateParam(['expiry','e'], nextFriday(today), 'The date the position expires (defaults to Friday)')
-    def strikePrice = new DoubleParam(['strike','s'],'the strike price of the option')
-    def salePrice = new DoubleParam(['premium','p'], 'the premium from the sale')
-    def basis = new DoubleParam(['basis','b'], 'the cost basis (defaults to strike price)')
+    def openDate = new DateParam(['open','o'],today,'<Date> The date the position was opened (defaults to today)')
+    def expiryDate = new DateParam(['expiry','e'], nextFriday(today), '<Date> The date the position expires (defaults to Friday)')
+    def strikePrice = new DoubleParam(['strike','s'],'<Price> The strike price of the option')
+    def salePrice = new DoubleParam(['premium','p'], '<Price> The premium from the sale')
+    def basis = new DoubleParam(['basis','b'], '<Price> The cost basis (defaults to strike price)')
     def help = new FlagParam(['help'],'Displays this help text.')
     Parser p = [openDate,expiryDate, strikePrice, salePrice, basis, help]
     try {
@@ -118,10 +123,10 @@ Days in Market:  ${weekdays}
 Capital:        \$${dblFmt.format(basis.value * 100d)}
 Max Value:      \$${dblFmt.format(maxGain * 100d)}
 Pct Max Gain:    ${pctFmt.format(multiplier - 1)}
-    Annualized:  ${pctFmt.format(multiplier ** ((double)WDAYS_PER_YEAR / (double)weekdays) - 1)}
+    Annualized:  ${pctFmt.format(multiplier ** (WDAYS_PER_YEAR / weekdays) - 1.0d)}
 Low Value:      \$${dblFmt.format(lowGain * 100d)}
 Pct Low Gain:    ${pctFmt.format(lowMult - 1)}
-    Annualized:  ${pctFmt.format(lowMult ** ((double) WDAYS_PER_YEAR / (double) weekdays) - 1)}
+    Annualized:  ${pctFmt.format(lowMult ** (WDAYS_PER_YEAR / weekdays) - 1.0d)}
 """)
     } catch(Exception e) {
       System.err.println(e.message)
@@ -132,7 +137,7 @@ Pct Low Gain:    ${pctFmt.format(lowMult - 1)}
   }
 }
 
-
+@CS
 class App {
   static void usage() {
     System.err.println('''Usage: optn <command> [options]
