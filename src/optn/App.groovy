@@ -4,8 +4,8 @@ import groovy.transform.PackageScope
 import groovy.transform.CompileStatic as CS
 
 import java.text.NumberFormat
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import org.rwtodd.args.*
 
 /* define a date argument that's easy to use from the command-line */
@@ -15,7 +15,7 @@ import org.rwtodd.args.*
 final class DateParam extends BasicOneArgParam<LocalDate> {
     private LocalDate today = LocalDate.now()
 
-    DateParam(Collection<String> names, LocalDate dflt, String help) { super(names, dflt, help); }
+    DateParam(Collection<String> names, LocalDate dflt, String help) { super(names, dflt, help) }
 
     @Override
     protected LocalDate convertArg(String param, String arg) {
@@ -56,12 +56,12 @@ final class Utils {
     }
 }
 
-import static optn.Utils.*;  // just use the util funcs freely
+import static optn.Utils.*  // just use the util funcs freely
 
 @CS
 @PackageScope
 class ShortPut {
-    def run(String[] args) {
+    static def run(String[] args) {
         // process args...
         def today = LocalDate.now()
         def openDate = new DateParam(['open', 'o'], today, '<Date> The Date the position was opened (defaults to today)')
@@ -105,7 +105,7 @@ Break Even:     \$${fmtField dblFmt.format(strikePrice.value - salePrice.value)}
 @CS
 @PackageScope
 class CoveredCall {
-    def run(String[] args) {
+    static def run(String[] args) {
         // process args...
         def today = LocalDate.now()
         def openDate = new DateParam(['open', 'o'], today, '<Date> The date the position was opened (defaults to today)')
@@ -186,9 +186,9 @@ Use `optn <command> --help` for help on an individual command
             usage()
         }
         switch (args[0]) {
-            case "cc" -> new CoveredCall().run(args.drop 1)
-            case "sp" -> new ShortPut().run(args.drop 1)
-            case "repl" -> runRepl()
+            case 'cc' -> CoveredCall.run(args.drop 1)
+            case 'sp' -> ShortPut.run(args.drop 1)
+            case 'repl' -> runRepl()
             default -> usage()
         }
     }
