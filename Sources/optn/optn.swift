@@ -90,7 +90,7 @@ public struct OptnCommand {
             }
             
             let weekdays = weekdaysBetween(sellDate.value.date, and: expiryDate.value.date)
-            let multiplier = (salePrice.value - 0.01) / strikePrice.value + 1.0
+            let multiplier = (salePrice.value - 0.005) / strikePrice.value + 1.0
             
             let nf = NumberFormatter()
             nf.numberStyle = .decimal
@@ -100,7 +100,7 @@ public struct OptnCommand {
             print("""
                   Days in Market:  \(weekdays)
                   Capital:        $\(nf.string(from: NSNumber(value: strikePrice.value * 100))!)
-                  Max Value:      $\(nf.string(from: NSNumber(value: salePrice.value * 100 - 1))!)
+                  Max Value:      $\(nf.string(from: NSNumber(value: salePrice.value * 100 - 0.5))!)
                   Pct Gain:        \(nf.string(from: NSNumber(value: 100.0 * (multiplier - 1)))!)%
                   Pct Annualized:  \(nf.string(from: NSNumber(value: 100.0 * (pow(multiplier, Double(daysInYear) / Double(weekdays)) - 1)))!)%
                   Break Even:     $\(nf.string(from: NSNumber(value: strikePrice.value - salePrice.value))!)
