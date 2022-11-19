@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rwtodd/ArgParser.git",
       "state" : {
-        "revision" : "22656329d75653e0cbe42f3e5a6449403b16d5c7",
-        "version" : "1.0.1"
+        "revision" : "012d9c16d74f4e5209d7f6f9649754128a9d2a38",
+        "version" : "1.0.2"
       }
     }
   ],

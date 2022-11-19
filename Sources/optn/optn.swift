@@ -77,10 +77,10 @@ public struct OptnCommand {
      Calculate the ROI and Break-Even of a potential short put options play.
      */
     private func shortPut(args: ArraySlice<String>) {
-        let sellDate = BasicParam(names: ["open","o"], initial: DateArg(today), help: "date the position was opened (defaults to today)")
-        let expiryDate = BasicParam(names: ["expiry","e"], initial: DateArg(friday), help: "the expiry date (defaults to this Friday)")
-        let strikePrice = BasicParam(names: ["strike","s"], initial: Double.infinity, help: "the strike price")
-        let salePrice = BasicParam(names: ["premium","p"], initial: Double.infinity, help: "the sale price")
+        let sellDate = BasicParam(names: ["open","o"], initial: DateArg(today), help: "<Date> date the position was opened (defaults to today)")
+        let expiryDate = BasicParam(names: ["expiry","e"], initial: DateArg(friday), help: "<Date> the expiry date (defaults to this Friday)")
+        let strikePrice = BasicParam(names: ["strike","s"], initial: Double.infinity, help: "<Price> the strike price")
+        let salePrice = BasicParam(names: ["premium","p"], initial: Double.infinity, help: "<Price> the sale price")
         let help = FlagParam(names: ["help","h"], help: "displays help")
         let ap = ArgParser(sellDate,expiryDate,strikePrice,salePrice,help)
         do {
@@ -130,11 +130,11 @@ public struct OptnCommand {
      Calculate the ROI of a potential covered-call options play.
      */
     private func covCall(args: ArraySlice<String>) {
-        let sellDate = BasicParam(names: ["open","o"], initial: DateArg(today), help: "date the position was opened (defaults to today)")
-        let expiryDate = BasicParam(names: ["expiry","e"], initial: DateArg(friday), help: "the expiry date (defaults to this Friday)")
-        let strikePrice = BasicParam(names: ["strike","s"], initial: Double.infinity, help: "the strike price")
-        let salePrice = BasicParam(names: ["premium","p"], initial: Double.infinity, help: "the sale price")
-        var basis = BasicParam(names: ["basis","b"], initial: Double.infinity, help: "the cost basis (defaults to strike price)")
+        let sellDate = BasicParam(names: ["open","o"], initial: DateArg(today), help: "<Date> date the position was opened (defaults to today)")
+        let expiryDate = BasicParam(names: ["expiry","e"], initial: DateArg(friday), help: "<Date> the expiry date (defaults to this Friday)")
+        let strikePrice = BasicParam(names: ["strike","s"], initial: Double.infinity, help: "<Price> the strike price")
+        let salePrice = BasicParam(names: ["premium","p"], initial: Double.infinity, help: "<Price> the sale price")
+        var basis = BasicParam(names: ["basis","b"], initial: Double.infinity, help: "<Price> the cost basis (defaults to strike price)")
         let help = FlagParam(names: ["help","h"], help: "displays help")
         let ap = ArgParser(sellDate,expiryDate,strikePrice,salePrice,basis,help)
         do {
