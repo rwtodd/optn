@@ -5,8 +5,9 @@ import PackageDescription
 
 let package = Package(
     name: "optn",
+    platforms: [ .macOS(.v13) ],
     dependencies: [
-        .package(url: "https://github.com/rwtodd/ArgParser.git", from: "1.0.2")
+        .package(url: "https://github.com/rwtodd/ArgParser.git", from: "1.1.0")
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
     ],

@@ -1,42 +1,6 @@
 import ArgParser
 import Foundation
 
-/**
- A proxy for Dates that is `LosslessStringConvertible` for use with `ArgParser`
- */
-struct DateArg : LosslessStringConvertible {
-    let date : Date
-    init?(_ description: String) {
-        let calendar = Calendar(identifier: .gregorian)
-        let parts = description.split(separator: "-").map { Int($0) }
-        guard !parts.contains(nil) else { return nil }
-        
-        var dc = calendar.dateComponents([.year,.month,.day], from: Date())
-        switch parts.count {
-        case 3:
-            dc.year = parts[0]
-            dc.month = parts[1]
-            dc.day = parts[2]
-        case 2:
-            dc.month = parts[0]
-            dc.day = parts[1]
-        case 1:
-            dc.day = parts[0]
-        default:
-            return nil
-        }
-        guard let date = calendar.date(from: dc) else { return nil }
-        self.date = date
-    }
-
-    init(_ d: Date) {
-        date = d
-    }
-    
-    var description: String { date.description }
-}
-
-
 @main
 public struct OptnCommand {
     let cal: Calendar
@@ -45,7 +9,7 @@ public struct OptnCommand {
     let friday: Date // start of day for the nearest friday
     
     init() {
-        cal = Calendar(identifier: .gregorian)
+        cal = Calendar.current
         daysInYear = 260 // could calculate, but why bother...
         today = cal.startOfDay(for: Date())
         let daysTilFriday = (13 - cal.component(.weekday, from: today)) % 7
@@ -77,8 +41,8 @@ public struct OptnCommand {
      Calculate the ROI and Break-Even of a potential short put options play.
      */
     private func shortPut(args: ArraySlice<String>) {
-        let sellDate = BasicParam(names: ["open","o"], initial: DateArg(today), help: "<Date> date the position was opened (defaults to today)")
-        let expiryDate = BasicParam(names: ["expiry","e"], initial: DateArg(friday), help: "<Date> the expiry date (defaults to this Friday)")
+        let sellDate = BasicParam(names: ["open","o"], initial: YMDArg(today), help: "<Date> date the position was opened (defaults to today)")
+        let expiryDate = BasicParam(names: ["expiry","e"], initial: YMDArg(friday), help: "<Date> the expiry date (defaults to this Friday)")
         let strikePrice = BasicParam(names: ["strike","s"], initial: Double.infinity, help: "<Price> the strike price")
         let salePrice = BasicParam(names: ["premium","p"], initial: Double.infinity, help: "<Price> the sale price")
         let help = FlagParam(names: ["help","h"], help: "displays help")
@@ -130,8 +94,8 @@ public struct OptnCommand {
      Calculate the ROI of a potential covered-call options play.
      */
     private func covCall(args: ArraySlice<String>) {
-        let sellDate = BasicParam(names: ["open","o"], initial: DateArg(today), help: "<Date> date the position was opened (defaults to today)")
-        let expiryDate = BasicParam(names: ["expiry","e"], initial: DateArg(friday), help: "<Date> the expiry date (defaults to this Friday)")
+        let sellDate = BasicParam(names: ["open","o"], initial: YMDArg(today), help: "<Date> date the position was opened (defaults to today)")
+        let expiryDate = BasicParam(names: ["expiry","e"], initial: YMDArg(friday), help: "<Date> the expiry date (defaults to this Friday)")
         let strikePrice = BasicParam(names: ["strike","s"], initial: Double.infinity, help: "<Price> the strike price")
         let salePrice = BasicParam(names: ["premium","p"], initial: Double.infinity, help: "<Price> the sale price")
         var basis = BasicParam(names: ["basis","b"], initial: Double.infinity, help: "<Price> the cost basis (defaults to strike price)")
