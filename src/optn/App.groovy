@@ -8,27 +8,6 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import org.rwtodd.args.*
 
-/* define a date argument that's easy to use from the command-line */
-
-@CS
-@PackageScope
-final class DateParam extends BasicOneArgParam<LocalDate> {
-    private LocalDate today = LocalDate.now()
-
-    DateParam(Collection<String> names, LocalDate dflt, String help) { super(names, dflt, help) }
-
-    @Override
-    protected LocalDate convertArg(String param, String arg) {
-        final var parts = arg.split('-').collect { Integer.valueOf(it) }
-        return switch (parts.size()) {
-            case 3 -> LocalDate.of(parts[0], parts[1], parts[2])
-            case 2 -> LocalDate.of(today.year, parts[0], parts[1])
-            case 1 -> LocalDate.of(today.year, today.monthValue, parts[0])
-            default -> throw new IllegalArgumentException("not a yyyy-mm-dd date!")
-        }
-    }
-}
-
 @CS
 @PackageScope
 final class Utils {
@@ -77,7 +56,7 @@ class ShortPut {
 
             // ok, calculate the answers...
             long weekdays = weekdaysBetween(openDate.value, expiryDate.value)
-            double multiplier = (salePrice.value - 0.01d) / strikePrice.value + 1.0d
+            double multiplier = (salePrice.value - 0.005d) / strikePrice.value + 1.0d
             NumberFormat pctFmt = NumberFormat.percentInstance
             pctFmt.minimumFractionDigits = 2
             pctFmt.maximumFractionDigits = 2
