@@ -53,6 +53,7 @@ class ShortPut {
             def extras = p.parse(args)
             if (help.value || !extras.empty) throw new Exception("User asked for help")
             if (strikePrice.value.isNaN() || salePrice.value.isNaN()) throw new Exception("Must give both strike price and sale price!")
+            if (expiryDate.value < openDate.value) throw new Exception("Expiry can't be before the open date!")
 
             // ok, calculate the answers...
             long weekdays = weekdaysBetween(openDate.value, expiryDate.value)
@@ -98,6 +99,7 @@ class CoveredCall {
             def extras = p.parse(args)
             if (help.value || !extras.empty) throw new Exception("User asked for help")
             if (strikePrice.value.isNaN() || salePrice.value.isNaN()) throw new Exception("Must give both strike price and sale price!")
+            if (expiryDate.value < openDate.value) throw new Exception("Expiry can't be before the open date!")
             if (basis.value.isNaN()) basis = strikePrice  // basis defaults to whatever the strike price was
 
             // ok, calculate the answers...
