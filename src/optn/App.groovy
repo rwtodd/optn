@@ -58,12 +58,14 @@ class ShortPut {
             // ok, calculate the answers...
             long weekdays = weekdaysBetween(openDate.value, expiryDate.value)
             double multiplier = (salePrice.value - 0.005d) / strikePrice.value + 1.0d
-            NumberFormat pctFmt = NumberFormat.percentInstance
-            pctFmt.minimumFractionDigits = 2
-            pctFmt.maximumFractionDigits = 2
-            NumberFormat dblFmt = NumberFormat.numberInstance
-            dblFmt.maximumFractionDigits = 2
-            dblFmt.minimumFractionDigits = 2
+            NumberFormat pctFmt = NumberFormat.percentInstance.tap {
+              minimumFractionDigits = 2
+              maximumFractionDigits = 2
+            }
+            NumberFormat dblFmt = NumberFormat.numberInstance.tap {
+              minimumFractionDigits = 2
+              maximumFractionDigits = 2
+            }
 
             print("""\
 Days in Market:  ${fmtField weekdays.toString()}
@@ -108,12 +110,14 @@ class CoveredCall {
             double multiplier = 1.0d + (maxGain / basis.value)
             double lowGain = salePrice.value - 0.005d
             double lowMult = 1.0d + (lowGain / basis.value)
-            NumberFormat pctFmt = NumberFormat.percentInstance
-            pctFmt.minimumFractionDigits = 2
-            pctFmt.maximumFractionDigits = 2
-            NumberFormat dblFmt = NumberFormat.numberInstance
-            dblFmt.maximumFractionDigits = 2
-            dblFmt.minimumFractionDigits = 2
+            NumberFormat pctFmt = NumberFormat.percentInstance.tap {
+              minimumFractionDigits = 2
+              maximumFractionDigits = 2
+            }
+            NumberFormat dblFmt = NumberFormat.numberInstance.tap {
+              minimumFractionDigits = 2
+              maximumFractionDigits = 2
+            }
 
             print("""\
 Days in Market:  ${fmtField weekdays.toString()}
@@ -152,7 +156,6 @@ Use `optn <command> --help` for help on an individual command
     }
 
     // read all the lines from stdin, parsing each as if it was the command line.
-    // This extremely cheap "repl" is better with rlwrap.
     static void runRepl() {
         System.in.withReader { rdr ->
             rdr.eachLine {
