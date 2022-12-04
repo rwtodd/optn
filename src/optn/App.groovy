@@ -40,7 +40,7 @@ import static optn.Utils.*  // just use the util funcs freely
 @CS
 @PackageScope
 class ShortPut {
-    static def run(String[] args) {
+    static int run(String[] args) {
         // process args...
         def today = LocalDate.now()
         def openDate = new DateParam(['open', 'o'], today, '<Date> The Date the position was opened (defaults to today)')
@@ -50,7 +50,7 @@ class ShortPut {
         def help = new FlagParam(['help'], 'Displays this help text.')
         Parser p = [openDate, expiryDate, strikePrice, salePrice, help]
         try {
-            def extras = p.parse(args)
+            def extras = p.parse(args, 1)
             if (help.value || !extras.empty) throw new Exception("User asked for help")
             if (strikePrice.value.isNaN() || salePrice.value.isNaN()) throw new Exception("Must give both strike price and sale price!")
             if (expiryDate.value < openDate.value) throw new Exception("Expiry can't be before the open date!")
@@ -75,11 +75,12 @@ Pct Gain:        ${fmtField pctFmt.format(multiplier - 1)}
 Pct Annualized:  ${fmtField pctFmt.format(multiplier**(WDAYS_PER_YEAR / weekdays) - 1.0d)}
 Break Even:     \$${fmtField dblFmt.format(strikePrice.value - salePrice.value)}
 """)
+            return 0
         } catch (Exception e) {
             System.err.println(e.message)
             System.err.println("\nUsage: sp [parameters]\n")
             p.printHelpText(System.err)
-            System.exit(1)
+            return 1
         }
     }
 }
@@ -87,7 +88,7 @@ Break Even:     \$${fmtField dblFmt.format(strikePrice.value - salePrice.value)}
 @CS
 @PackageScope
 class CoveredCall {
-    static def run(String[] args) {
+    static int run(String[] args) {
         // process args...
         def today = LocalDate.now()
         def openDate = new DateParam(['open', 'o'], today, '<Date> The date the position was opened (defaults to today)')
@@ -98,7 +99,7 @@ class CoveredCall {
         def help = new FlagParam(['help'], 'Displays this help text.')
         Parser p = [openDate, expiryDate, strikePrice, salePrice, basis, help]
         try {
-            def extras = p.parse(args)
+            def extras = p.parse(args, 1)
             if (help.value || !extras.empty) throw new Exception("User asked for help")
             if (strikePrice.value.isNaN() || salePrice.value.isNaN()) throw new Exception("Must give both strike price and sale price!")
             if (expiryDate.value < openDate.value) throw new Exception("Expiry can't be before the open date!")
@@ -129,11 +130,12 @@ Low Value:      \$${fmtField dblFmt.format(lowGain * 100d)}
 Pct Low Gain:    ${fmtField pctFmt.format(lowMult - 1)}
     Annualized:  ${fmtField pctFmt.format(lowMult**(WDAYS_PER_YEAR / weekdays) - 1.0d)}
 """)
+            return 0
         } catch (Exception e) {
             System.err.println(e.message)
             System.err.println("\nUsage: cc [parameters]\n")
             p.printHelpText(System.err)
-            System.exit(1)
+            return 1
         }
     }
 }
@@ -152,28 +154,41 @@ Commands:
 
 Use `optn <command> --help` for help on an individual command
 ''')
-        System.exit(1)
     }
 
     // read all the lines from stdin, parsing each as if it was the command line.
     static void runRepl() {
         System.in.withReader { rdr ->
             rdr.eachLine {
-                main(it.trim().split(' +'))
+                final var cmd = it.trim().split(' +')
+                if(cmd[0] == '') System.exit(0)
+                parseSubcommand(cmd)
                 println('\n')
             }
         }
     }
 
-    static void main(String[] args) {
-        if (args.length < 1) {
-            usage()
+    static int parseSubcommand(String[] args) {
+        return switch (args[0]) {
+            case 'cc' -> CoveredCall.run(args)
+            case 'sp' -> ShortPut.run(args)
+            default -> { usage() ; yield 1 }
         }
-        switch (args[0]) {
-            case 'cc' -> CoveredCall.run(args.drop 1)
-            case 'sp' -> ShortPut.run(args.drop 1)
-            case 'repl' -> runRepl()
-            default -> usage()
+    }
+
+    static void main(String[] args) {
+        // with no args, just print usage and error exit
+        if (args.length == 0) {
+            usage()
+            System.exit(1)
+        }
+
+        // if the one arg was 'repl', then run a repl
+        if(args.length == 1 && args[0].equalsIgnoreCase('repl')) {
+            runRepl()
+        } else {
+            // otherwise, try to parse the given subcommand
+            System.exit(parseSubcommand(args))
         }
     }
 }
