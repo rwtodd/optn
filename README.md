@@ -2,7 +2,7 @@
 
 A cmdline program to calculate options returns.  I have similar powershell scripts.
 I wrote this in swift first, to get more familiar with it (and exercise the `ArgParser`
-library I had written), but now I've rewritten it in Groovy.  The swift version is still
+library I had written), but now I've rewritten it in java.  The swift version is still
 in the repository history, if you are interested.
 
 ## Usage
