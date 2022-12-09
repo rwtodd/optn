@@ -1,13 +1,17 @@
 plugins {
     // Apply the groovy Plugin to add support for Groovy.
-    id 'groovy'
+    id 'java'
 
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
 }
 
 sourceSets {
-  main.groovy.srcDirs = ['src']
+  main.java.srcDirs = ['src']
+}
+
+compileJava {
+    options.release = 17
 }
 
 repositories {
@@ -16,19 +20,21 @@ repositories {
 }
 
 dependencies {
-    // Use the latest Groovy version for building this library
-    implementation 'org.apache.groovy:groovy:4.0.6'
-    implementation 'org.rwtodd:org.rwtodd.args:2.0.0'
+    implementation 'org.rwtodd:org.rwtodd.args:2.0.1'
 }
 
 application {
     // Define the main class for the application.
+    mainModule = 'optn'
     mainClass = 'optn.App'
 }
 
-// print out the runtime classpath to help run manually...
-task rcp {
+// print out the runtime command-line to help run manually...
+// unfortunate to have to ask for a classpath to get a module path,
+// but that is the pain of modular java!
+task rcl {
     doLast {
-        println(sourceSets.main.runtimeClasspath.asPath)
+        println("java -p '${sourceSets.main.runtimeClasspath.asPath}' -m optn")
     }
 }
+
