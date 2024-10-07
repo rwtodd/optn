@@ -74,7 +74,7 @@ class ShortPut {
          final var expiryDate = new DateParam(List.of("expiry","e"), nextFriday(today), "<Date> The date the position expires (defaults to Friday)");
          final var strikePrice = new DoubleParam(List.of("strike","s"), "<Price> The strike price of the option");
          final var salePrice = new DoubleParam(List.of("premium","p"), "<Price> The premium from the sale");
-         var basis = new DoubleParam(List.of("basis","b"), "<Price> The cost basis (defaults to the strike price");
+         var basis = new DoubleParam(List.of("basis","b"), "<Price> The cost basis (defaults to the strike price)");
          final var help = new FlagParam(List.of("help"), "Displays this help text.");
          final var p = new Parser(openDate, expiryDate, strikePrice, salePrice, basis, help);
          try {
